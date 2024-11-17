@@ -7,9 +7,11 @@
 using namespace std;
 using namespace std::chrono;
 
+// set to true to enable
+#define RECURSIVE_ENABLED false
 // +10 for each next dataset
-#define INDEX_OFFSET 0
-#define FILE_PATH "dataset/datasetA"
+#define INDEX_OFFSET 40
+#define FILE_PATH "dataset/datasetC"
 #define FILE_EXTENTION ".txt"
 //this value must be at least 9, to test all cases in set dataset
 #define ITERATIONS 100
@@ -51,6 +53,7 @@ int levenshtein(const string &s1, const string &s2)
 
 int levenshteinRecursive(const string& str1, const string& str2, int m, int n)
 {
+    //cout << "DEBUG" << endl << str1 << " " << m << endl << str2 << " " << n << endl; 
     // str1 is empty
     if (m == 0) {
         return n;
@@ -84,11 +87,9 @@ int main()
     int bf_sum = 0;
     for (int i = 0; i < ITERATIONS; i++)
     {
-        pair<string, string> aux;
         string s1, s2;
 
         //  - Load Dataset -
-        //
         ifstream file;
         string fileName = FILE_PATH + to_string(ITERATIONS%9+INDEX_OFFSET) + FILE_EXTENTION;
         file.open(fileName);
@@ -98,22 +99,9 @@ int main()
             return 0;
         }
         file >> s1 >> s2;
-        aux = {s1, s2};
         file.close();
         //
-
-        auto start1 = high_resolution_clock::now();
-
-        //  - Function Call -
-        //
-        levenshteinRecursive(s1, s2, i, i);
-        //
-
-        auto stop1 = high_resolution_clock::now();
-    
-        auto duration1 = duration_cast<microseconds>(stop1 - start1);
-        bf_sum += duration1.count();
-
+        
         auto start = high_resolution_clock::now();
 
         //  - Function Call -
@@ -125,6 +113,20 @@ int main()
     
         auto duration = duration_cast<microseconds>(stop - start);
         dp_sum += duration.count();
+        //
+        
+        if(!RECURSIVE_ENABLED) continue;
+        auto start1 = high_resolution_clock::now();
+
+        //  - Function Call -
+        //
+        levenshteinRecursive(s1, s2, s1.size()-2, s2.size()-1);
+        //
+
+        auto stop1 = high_resolution_clock::now();
+    
+        auto duration1 = duration_cast<microseconds>(stop1 - start1);
+        bf_sum += duration1.count();
     }
 
     cout << "Average time taken by levenshtein function: " << dp_sum/ITERATIONS << " microseconds" << endl;
