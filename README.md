@@ -8,7 +8,7 @@ Para la compilación, se utiliza el siguiente comando sobre la consola de VSCode
 g++ .\Implementations.cpp -o implement.exe
 
 luego para correr el código es tan simple como correr el siguiente comando
-.\implement.exe+
+.\implement.exe
 
 _
 
